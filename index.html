@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Procvičování převodů mezi desítkovou a dvojkovou soustavou.">
+    <title>Trenažér číselných soustav</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="page-header">
+        <p class="eyebrow">Matematika · procvičování</p>
+        <h1>Trenažér číselných soustav</h1>
+        <p class="intro">Vyber si obtížnost a procvič převody mezi desítkovou a dvojkovou soustavou.</p>
+      </header>
+
+      <section class="panel setup" aria-labelledby="setup-heading">
+        <h2 id="setup-heading">Nastavení úloh</h2>
+        <div class="settings">
+          <label for="difficulty">Obtížnost</label>
+          <select id="difficulty">
+            <option value="easy">Lehká (0–15)</option>
+            <option value="medium">Střední (0–255)</option>
+            <option value="hard">Těžká (0–1023)</option>
+          </select>
+
+          <label for="direction">Typ převodu</label>
+          <select id="direction">
+            <option value="dec-to-bin">Desítková → dvojková (DEC → BIN)</option>
+            <option value="bin-to-dec">Dvojková → desítková (BIN → DEC)</option>
+          </select>
+        </div>
+        <button id="start-button" class="button button-primary" type="button">Vygenerovat 10 úloh</button>
+      </section>
+
+      <section id="quiz" class="panel quiz" aria-labelledby="quiz-heading" hidden>
+        <div class="quiz-topline">
+          <h2 id="quiz-heading">Úloha</h2>
+          <p id="question-number" class="question-number" aria-live="polite"></p>
+        </div>
+        <p id="score" class="score" aria-live="polite"></p>
+        <p id="question-prompt" class="question-prompt"></p>
+        <form id="answer-form" novalidate>
+          <label for="answer-input" class="answer-label">Tvoje odpověď</label>
+          <div class="answer-controls">
+            <input
+              id="answer-input"
+              name="answer"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              aria-describedby="answer-feedback"
+            >
+            <button id="check-button" class="button button-primary" type="submit">Zkontrolovat</button>
+          </div>
+        </form>
+        <div id="answer-feedback" class="answer-feedback" role="status" aria-live="polite" hidden>
+          <p id="answer-result" class="answer-result"></p>
+          <p id="correct-answer"></p>
+          <p id="solution-explanation" class="solution-explanation"></p>
+        </div>
+        <button id="next-button" class="button button-primary" type="button" disabled>Další úloha</button>
+      </section>
+
+      <section id="completion-message" class="panel completion-message" aria-labelledby="completion-heading" hidden>
+        <h2 id="completion-heading">Výsledky testu</h2>
+        <p id="final-score"></p>
+        <p id="final-percentage"></p>
+        <h3>Chybné odpovědi</h3>
+        <p id="no-mistakes" hidden>Bez chyby — všechny odpovědi jsou správné!</p>
+        <ul id="mistakes-list"></ul>
+        <p class="completion-note">Můžeš si vygenerovat novou sadu úloh.</p>
+      </section>
+    </main>
+  </body>
+</html>
