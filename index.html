@@ -64,6 +64,11 @@
         </div>
         <p id="timer" class="timer" aria-live="off" hidden></p>
         <p id="score" class="score" aria-live="polite"></p>
+        <div class="progress-group">
+          <label for="test-progress">Průběh testu</label>
+          <progress id="test-progress" max="10" value="0">0 %</progress>
+          <p id="progress-description" class="progress-description" aria-live="polite"></p>
+        </div>
         <p id="question-prompt" class="question-prompt"></p>
         <form id="answer-form" novalidate>
           <label for="answer-input" class="answer-label">Tvoje odpověď</label>

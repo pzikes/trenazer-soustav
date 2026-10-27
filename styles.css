@@ -171,6 +171,50 @@ input {
   font-variant-numeric: tabular-nums;
 }
 
+.progress-group {
+  margin-bottom: 22px;
+}
+
+.progress-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 650;
+}
+
+.progress-group progress {
+  display: block;
+  width: 100%;
+  height: 14px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: #e2e8f0;
+  accent-color: #4338ca;
+}
+
+.progress-group progress::-webkit-progress-bar {
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.progress-group progress::-webkit-progress-value {
+  border-radius: 999px;
+  background: #4338ca;
+  transition: width 180ms ease;
+}
+
+.progress-group progress::-moz-progress-bar {
+  border-radius: 999px;
+  background: #4338ca;
+  transition: width 180ms ease;
+}
+
+.progress-description {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
 .timer {
   display: inline-block;
   margin-bottom: 16px;
@@ -180,6 +224,12 @@ input {
   color: #9a3412;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+}
+
+.timer.is-warning {
+  background: #b91c1c;
+  color: #fff;
+  box-shadow: 0 0 0 3px #fecaca;
 }
 
 .quiz {

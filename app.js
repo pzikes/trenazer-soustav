@@ -10,6 +10,8 @@ const printTestButton = document.querySelector("#print-test-button");
 const printSolutionsButton = document.querySelector("#print-solutions-button");
 const scoreDisplay = document.querySelector("#score");
 const timerDisplay = document.querySelector("#timer");
+const testProgress = document.querySelector("#test-progress");
+const progressDescription = document.querySelector("#progress-description");
 const quizSection = document.querySelector("#quiz");
 const questionNumber = document.querySelector("#question-number");
 const questionPrompt = document.querySelector("#question-prompt");
@@ -39,6 +41,13 @@ function updateScore() {
   const evaluatedTasks = tasks.filter(task => task.evaluated);
   const correctAnswers = evaluatedTasks.filter(task => task.isCorrect).length;
   scoreDisplay.textContent = `Skóre: ${correctAnswers} / ${tasks.length}`;
+}
+
+function updateProgress() {
+  const completedTasks = tasks.filter(task => task.evaluated).length;
+  testProgress.max = tasks.length;
+  testProgress.value = completedTasks;
+  progressDescription.textContent = `Vyhodnoceno ${completedTasks} z ${tasks.length} úloh`;
 }
 
 function renderResults(timeExpired) {
@@ -72,6 +81,7 @@ function renderCurrentTask() {
   questionNumber.textContent = `Úloha ${currentTaskIndex + 1} z ${tasks.length}`;
   questionPrompt.textContent = formatQuestion(task);
   updateScore();
+  updateProgress();
   answerInput.value = "";
   answerInput.disabled = false;
   checkButton.disabled = false;
@@ -112,6 +122,7 @@ function submitAnswer(event) {
   task.userAnswer = answerInput.value.trim();
   task.isCorrect = result.correct;
   updateScore();
+  updateProgress();
   answerFeedback.classList.toggle("is-correct", result.correct);
   answerFeedback.classList.toggle("is-incorrect", !result.correct);
   answerResult.textContent = result.correct
@@ -136,6 +147,7 @@ function generateTest() {
     Number(questionCountSelect.value),
   );
   currentTaskIndex = 0;
+  updateProgress();
   startButton.disabled = false;
   printTestButton.disabled = false;
   printSolutionsButton.disabled = false;
@@ -152,6 +164,7 @@ function formatTime(seconds) {
 function updateTimer() {
   const remainingSeconds = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
   timerDisplay.textContent = `Zbývající čas: ${formatTime(remainingSeconds)}`;
+  timerDisplay.classList.toggle("is-warning", remainingSeconds <= 30);
 
   if (remainingSeconds === 0) {
     finishQuiz(true);
@@ -161,10 +174,12 @@ function updateTimer() {
 function startTimer() {
   const timeLimitMinutes = Number(timeLimitSelect.value);
   if (timeLimitMinutes === 0) {
+    timerDisplay.classList.remove("is-warning");
     timerDisplay.hidden = true;
     return;
   }
 
+  timerDisplay.classList.remove("is-warning");
   timerDisplay.hidden = false;
   timerDeadline = Date.now() + timeLimitMinutes * 60 * 1000;
   timerIntervalId = window.setInterval(updateTimer, 1000);
@@ -203,6 +218,7 @@ function finishQuiz(timeExpired = false) {
     timerIntervalId = null;
   }
   timerDeadline = null;
+  timerDisplay.classList.remove("is-warning");
   timerDisplay.hidden = true;
   generateButton.disabled = false;
   startButton.disabled = true;

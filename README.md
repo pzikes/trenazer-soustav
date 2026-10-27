@@ -1,4 +1,4 @@
-# Trenažér číselných soustav
+# Trenažér číselných soustav 2.1
 
 Jednoduchá vzdělávací webová aplikace pro procvičování převodů mezi desítkovou a dvojkovou soustavou. Je určena zejména žákům základních škol a je vytvořena pomocí HTML, CSS a JavaScriptu bez frameworku a dalších závislostí.
 
@@ -43,9 +43,23 @@ Během probíhajícího testu nelze vygenerovat nový ani změnit jeho nastaven�
 - V poli odpovědi stiskni `Enter` pro kontrolu.
 - Po vyhodnocení stiskni `Enter` na tlačítku **Další úloha** pro pokračování.
 
+## Testy
+
+Testy používají vestavěný testovací nástroj Node.js (`node:test`) a nevyžadují instalaci dalších balíčků. Potřebuješ Node.js 18 nebo novější. V kořenové složce projektu spusť v prostředí PowerShell na Windows:
+
+```powershell
+npm.cmd test
+```
+
+V ostatních shellech použij `npm test`.
+
+Testy ověřují generování úloh v rozsahu a se správným zastoupením převodů, validaci odpovědí a vysvětlení obou typů převodu. Vysvětlení BIN → DEC řadí mocniny od nejvyššího řádu a ukazuje také součet hodnot jednotlivých členů.
+
 ## Soubory
 
 - `index.html` — struktura stránky a ovládací prvky.
 - `styles.css` — vzhled aplikace a přizpůsobení menším obrazovkám.
 - `app.js` — práce s rozhraním, průchod testem, skóre a výsledky.
 - `questions.js` — generování úloh, formát zadání, kontrola odpovědí a vysvětlení převodů.
+- `tests/questions.test.js` — automatizované testy funkcí pro generování, kontrolu a vysvětlení úloh.
+- `package.json` — nastavení ES modulů pro Node.js a příkaz `npm test`; aplikace nemá žádné externí závislosti.

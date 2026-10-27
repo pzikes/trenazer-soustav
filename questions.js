@@ -151,12 +151,17 @@ export function explainSolution(task) {
 
   if (task.direction === "bin-to-dec") {
     const binary = task.value.toString(2);
-    const terms = [...binary].reverse().map((bit, power) => {
+    const terms = [...binary].map((bit, index) => {
+      const power = binary.length - index - 1;
       const superscriptPower = String(power).replace(/\d/g, digit => "⁰¹²³⁴⁵⁶⁷⁸⁹"[Number(digit)]);
       return `${bit} × 2${superscriptPower}`;
     });
+    const termValues = [...binary].map((bit, index) => {
+      const power = binary.length - index - 1;
+      return Number(bit) * 2 ** power;
+    });
 
-    return `Každou číslici vynásobíme odpovídající mocninou dvojky a výsledky sečteme: ${terms.join(" + ")} = ${task.value}.`;
+    return `Každou číslici vynásobíme odpovídající mocninou dvojky a výsledky sečteme. ${binary}₂ = ${terms.join(" + ")} = ${termValues.join(" + ")} = ${task.value}₁₀.`;
   }
 
   throw new RangeError(`Neznámý typ převodu: ${task.direction}`);
