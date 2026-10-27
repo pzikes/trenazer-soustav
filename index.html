@@ -17,7 +17,7 @@
       </header>
 
       <section class="panel setup" aria-labelledby="setup-heading">
-        <h2 id="setup-heading">Nastavení úloh</h2>
+        <h2 id="setup-heading">Příprava testu · režim učitele</h2>
         <div class="settings">
           <label for="difficulty">Obtížnost</label>
           <select id="difficulty">
@@ -26,13 +26,35 @@
             <option value="hard">Těžká (0–1023)</option>
           </select>
 
-          <label for="direction">Typ převodu</label>
-          <select id="direction">
-            <option value="dec-to-bin">Desítková → dvojková (DEC → BIN)</option>
-            <option value="bin-to-dec">Dvojková → desítková (BIN → DEC)</option>
+          <label for="question-count">Počet otázek</label>
+          <select id="question-count">
+            <option value="5">5 otázek</option>
+            <option value="10" selected>10 otázek</option>
+            <option value="20">20 otázek</option>
+          </select>
+
+          <label for="time-limit">Časový limit</label>
+          <select id="time-limit">
+            <option value="0">Bez limitu</option>
+            <option value="5">5 minut</option>
+            <option value="10">10 minut</option>
+            <option value="15">15 minut</option>
+            <option value="20">20 minut</option>
+          </select>
+
+          <label for="direction-distribution">Zastoupení převodů</label>
+          <select id="direction-distribution">
+            <option value="balanced">Oba směry rovnoměrně</option>
+            <option value="more-dec-to-bin">Více DEC → BIN (přibližně 60 %)</option>
+            <option value="more-bin-to-dec">Více BIN → DEC (přibližně 60 %)</option>
           </select>
         </div>
-        <button id="start-button" class="button button-primary" type="button">Vygenerovat 10 úloh</button>
+        <div class="setup-actions">
+          <button id="generate-button" class="button button-primary" type="button">Vygenerovat test</button>
+          <button id="start-button" class="button button-primary" type="button" disabled>Spustit test</button>
+          <button id="print-test-button" class="button button-secondary" type="button" disabled>Tisknout zadání</button>
+          <button id="print-solutions-button" class="button button-secondary" type="button" disabled>Tisknout řešení</button>
+        </div>
       </section>
 
       <section id="quiz" class="panel quiz" aria-labelledby="quiz-heading" hidden>
@@ -40,6 +62,7 @@
           <h2 id="quiz-heading">Úloha</h2>
           <p id="question-number" class="question-number" aria-live="polite"></p>
         </div>
+        <p id="timer" class="timer" aria-live="off" hidden></p>
         <p id="score" class="score" aria-live="polite"></p>
         <p id="question-prompt" class="question-prompt"></p>
         <form id="answer-form" novalidate>
@@ -66,6 +89,7 @@
 
       <section id="completion-message" class="panel completion-message" aria-labelledby="completion-heading" hidden>
         <h2 id="completion-heading">Výsledky testu</h2>
+        <p id="time-expired-message" hidden>Časový limit vypršel. Nezodpovězené otázky se započítaly jako chybné.</p>
         <p id="final-score"></p>
         <p id="final-percentage"></p>
         <h3>Chybné odpovědi</h3>
@@ -73,6 +97,8 @@
         <ul id="mistakes-list"></ul>
         <p class="completion-note">Můžeš si vygenerovat novou sadu úloh.</p>
       </section>
+
+      <section id="print-sheet" class="print-sheet" aria-live="polite" hidden></section>
     </main>
   </body>
 </html>

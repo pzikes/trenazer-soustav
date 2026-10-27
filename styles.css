@@ -80,6 +80,12 @@ h1 {
   font-weight: 650;
 }
 
+.setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 select {
   width: 100%;
   min-height: 44px;
@@ -143,6 +149,16 @@ input {
   background: #3730a3;
 }
 
+.button-secondary {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #172554;
+}
+
+.button-secondary:hover {
+  background: #e2e8f0;
+}
+
 .button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
@@ -151,6 +167,17 @@ input {
 .score {
   margin-bottom: 16px;
   color: #475569;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fff7ed;
+  color: #9a3412;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -252,6 +279,10 @@ input {
   color: #312e81;
 }
 
+.print-sheet {
+  display: none;
+}
+
 [hidden] {
   display: none !important;
 }
@@ -278,7 +309,62 @@ input {
     width: 100%;
   }
 
+  .setup-actions {
+    flex-direction: column;
+  }
+
   .answer-controls {
     flex-direction: column;
+  }
+}
+
+@media print {
+  @page {
+    margin: 18mm;
+  }
+
+  body {
+    min-width: 0;
+    padding: 0;
+    background: #fff;
+    color: #000;
+  }
+
+  .app {
+    width: auto;
+    margin: 0;
+  }
+
+  .app > :not(#print-sheet) {
+    display: none !important;
+  }
+
+  #print-sheet {
+    display: block !important;
+    padding: 0;
+    color: #000;
+    font-family: Arial, sans-serif;
+  }
+
+  #print-sheet h1 {
+    font-size: 22pt;
+  }
+
+  #print-sheet li {
+    margin-bottom: 18px;
+    break-inside: avoid;
+  }
+
+  #print-sheet p {
+    margin-bottom: 8px;
+    line-height: 1.45;
+  }
+
+  .print-answer {
+    font-weight: 700;
+  }
+
+  .print-answer-line {
+    margin-top: 20px;
   }
 }

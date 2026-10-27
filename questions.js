@@ -5,28 +5,42 @@ const DIFFICULTY_MAXIMUMS = Object.freeze({
 });
 
 const DIRECTIONS = new Set(["dec-to-bin", "bin-to-dec"]);
+const DIRECTION_DISTRIBUTIONS = new Set([
+  "balanced",
+  "more-dec-to-bin",
+  "more-bin-to-dec",
+]);
 
-export function generateTasks(difficulty, direction, count = 10) {
+export function generateTasks(difficulty, directionDistribution, count = 10) {
   const maximum = DIFFICULTY_MAXIMUMS[difficulty];
 
   if (maximum === undefined) {
     throw new RangeError(`Neznámá obtížnost: ${difficulty}`);
   }
-  if (!DIRECTIONS.has(direction)) {
-    throw new RangeError(`Neznámý typ převodu: ${direction}`);
+  if (!DIRECTIONS.has(directionDistribution) && !DIRECTION_DISTRIBUTIONS.has(directionDistribution)) {
+    throw new RangeError(`Neznámé zastoupení převodů: ${directionDistribution}`);
   }
-  if (!Number.isInteger(count) || count < 1 || count > maximum + 1) {
-    throw new RangeError(`Počet úloh musí být celé číslo od 1 do ${maximum + 1}.`);
-  }
-
-  const values = Array.from({ length: maximum + 1 }, (_, value) => value);
-
-  for (let index = values.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [values[index], values[randomIndex]] = [values[randomIndex], values[index]];
+  const maximumTaskCount = (maximum + 1) * (DIRECTIONS.has(directionDistribution) ? 1 : 2);
+  if (!Number.isInteger(count) || count < 1 || count > maximumTaskCount) {
+    throw new RangeError(`Počet úloh musí být celé číslo od 1 do ${maximumTaskCount}.`);
   }
 
-  return values.slice(0, count).map((value, index) => ({
+  const directions = createDirections(directionDistribution, count);
+  const tasks = [];
+
+  for (const direction of DIRECTIONS) {
+    const directionCount = directions.filter(taskDirection => taskDirection === direction).length;
+    const values = Array.from({ length: maximum + 1 }, (_, value) => value);
+    shuffle(values);
+
+    for (const value of values.slice(0, directionCount)) {
+      tasks.push({ value, direction });
+    }
+  }
+
+  shuffle(tasks);
+
+  return tasks.map(({ value, direction }, index) => ({
     id: index + 1,
     value,
     direction,
@@ -34,6 +48,35 @@ export function generateTasks(difficulty, direction, count = 10) {
     userAnswer: null,
     isCorrect: null,
   }));
+}
+
+function shuffle(items) {
+  for (let index = items.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [items[index], items[randomIndex]] = [items[randomIndex], items[index]];
+  }
+}
+
+function createDirections(distribution, count) {
+  if (DIRECTIONS.has(distribution)) {
+    return Array(count).fill(distribution);
+  }
+
+  const decToBinCount = distribution === "balanced"
+    ? Math.ceil(count / 2)
+    : distribution === "more-dec-to-bin"
+      ? Math.round(count * 0.6)
+      : count - Math.round(count * 0.6);
+  const binToDecCount = count - decToBinCount;
+
+  if (decToBinCount === 0 || binToDecCount === 0) {
+    throw new RangeError("Test musí obsahovat oba směry převodu.");
+  }
+
+  return [
+    ...Array(decToBinCount).fill("dec-to-bin"),
+    ...Array(binToDecCount).fill("bin-to-dec"),
+  ];
 }
 
 export function formatQuestion(task) {

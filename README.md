@@ -18,14 +18,16 @@ Alternativně můžeš ve Visual Studio Code použít rozšíření Live Server 
 
 ## Jak aplikace funguje
 
-1. Vyber obtížnost a směr převodu.
-2. Spusť sadu tlačítkem **Vygenerovat 10 úloh**. Aplikace náhodně vybere deset různých čísel z rozsahu zvolené obtížnosti.
-3. U každé úlohy zadej odpověď v cílové soustavě a zvol **Zkontrolovat**.
-4. Aplikace ověří povolené znaky, zobrazí výsledek, správnou odpověď a postup řešení. Správnou hodnotu uzná i tehdy, když je zapsaná s úvodními nulami.
-5. Po vyhodnocení přejdi na další otázku. Odpověď jedné otázky se vyhodnocuje pouze jednou.
-6. V průběhu testu se zobrazuje skóre. Po poslední otázce aplikace zobrazí celkový počet správných odpovědí, procentuální úspěšnost a seznam chybných odpovědí.
+1. Vyber obtížnost, počet otázek (5, 10 nebo 20), časový limit a zastoupení směrů převodu.
+2. Zvol **Vygenerovat test**. Test vždy obsahuje úlohy v obou směrech převodu; jejich zastoupení může být rovnoměrné nebo s přibližně 60% převahou jednoho směru. Stejná číselná hodnota se může objevit jednou v každém směru, ale totožná úloha se neopakuje.
+3. Před spuštěním můžeš vytisknout samotné zadání nebo samostatný list řešení s postupy.
+4. Zvol **Spustit test**. Při nastaveném limitu se po jeho vypršení test automaticky ukončí a nezodpovězené otázky se započítají jako chybné.
+5. U každé úlohy zadej odpověď v cílové soustavě a zvol **Zkontrolovat**.
+6. Aplikace ověří povolené znaky, zobrazí výsledek, správnou odpověď a postup řešení. Správnou hodnotu uzná i tehdy, když je zapsaná s úvodními nulami.
+7. Po vyhodnocení přejdi na další otázku. Odpověď jedné otázky se vyhodnocuje pouze jednou.
+8. V průběhu testu se zobrazuje skóre. Po poslední otázce aplikace zobrazí celkový počet správných odpovědí, procentuální úspěšnost a seznam chybných nebo nezodpovězených úloh.
 
-Během probíhající sady nelze spustit novou ani změnit její nastavení. Po dokončení můžeš vytvořit další sadu.
+Během probíhajícího testu nelze vygenerovat nový ani změnit jeho nastavení. Po dokončení může učitel připravit další test.
 
 ### Obtížnosti a směry převodu
 
@@ -34,6 +36,7 @@ Během probíhající sady nelze spustit novou ani změnit její nastavení. Po 
 - **Těžká:** čísla od 0 do 1023
 - **DEC → BIN:** převod z desítkové do dvojkové soustavy
 - **BIN → DEC:** převod z dvojkové do desítkové soustavy
+- Každý test obsahuje oba směry převodu; učitel volí rovnoměrné zastoupení nebo přibližně 60% převahu jednoho z nich.
 
 ### Ovládání klávesnicí
 
