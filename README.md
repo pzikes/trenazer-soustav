@@ -1,6 +1,6 @@
 # Trenažér číselných soustav 2.1
 
-Jednoduchá vzdělávací webová aplikace pro procvičování převodů mezi desítkovou a dvojkovou soustavou. Je určena zejména žákům základních škol a je vytvořena pomocí HTML, CSS a JavaScriptu bez frameworku a dalších závislostí.
+Jednoduchá vzdělávací webová aplikace pro procvičování převodů mezi desítkovou a dvojkovou soustavou. Je určena zejména žákům základních škol a je vytvořena pomocí HTML, CSS a JavaScriptu bez frameworku a dalších závislostí. Toto je aktualizovaný popis.
 
 ## Spuštění
 
