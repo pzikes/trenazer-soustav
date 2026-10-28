@@ -103,6 +103,41 @@
         <p class="completion-note">Můžeš si vygenerovat novou sadu úloh.</p>
       </section>
 
+      <section class="panel history-panel" aria-labelledby="history-heading">
+        <div class="history-heading">
+          <h2 id="history-heading">Historie posledních testů</h2>
+          <button id="clear-history-button" class="button button-secondary" type="button">Smazat historii</button>
+        </div>
+        <p id="history-status" class="history-status" role="status" aria-live="polite" hidden></p>
+        <p id="history-empty">Zatím nebyly dokončeny žádné testy.</p>
+        <div id="history-chart-wrapper" class="history-chart-wrapper" hidden>
+          <svg
+            id="history-chart"
+            class="history-chart"
+            role="img"
+            aria-labelledby="history-chart-title history-chart-description"
+            viewBox="0 0 640 320"
+          >
+            <title id="history-chart-title">Úspěšnost v dokončených testech</title>
+            <desc id="history-chart-description"></desc>
+          </svg>
+        </div>
+        <div class="history-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Datum</th>
+                <th scope="col">Obtížnost</th>
+                <th scope="col">Skóre</th>
+                <th scope="col">Počet otázek</th>
+                <th scope="col">Úspěšnost</th>
+              </tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+      </section>
+
       <section id="print-sheet" class="print-sheet" aria-live="polite" hidden></section>
     </main>
   </body>

@@ -329,6 +329,93 @@ input {
   color: #312e81;
 }
 
+.history-panel {
+  margin-top: 20px;
+}
+
+.history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.history-heading h2 {
+  margin-bottom: 16px;
+}
+
+.history-status {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fff7ed;
+  color: #7c2d12;
+  line-height: 1.5;
+}
+
+.history-table-wrapper {
+  overflow-x: auto;
+}
+
+.history-chart-wrapper {
+  margin: 8px 0 24px;
+  overflow-x: auto;
+}
+
+.history-chart {
+  display: block;
+  width: 100%;
+  min-width: 480px;
+  height: auto;
+}
+
+.chart-grid-line {
+  stroke: #dbe3f0;
+  stroke-width: 1;
+}
+
+.chart-bar {
+  fill: #4f46e5;
+}
+
+.chart-value-label {
+  fill: #172554;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.chart-axis-label {
+  fill: #64748b;
+  font-size: 11px;
+}
+
+.chart-axis-title {
+  fill: #475569;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.history-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.history-panel th,
+.history-panel td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.history-panel th {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.history-panel tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 .print-sheet {
   display: none;
 }
@@ -361,6 +448,12 @@ input {
 
   .setup-actions {
     flex-direction: column;
+  }
+
+  .history-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0;
   }
 
   .answer-controls {

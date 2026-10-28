@@ -1,4 +1,5 @@
 import { checkAnswer, explainSolution, formatQuestion, generateTasks } from "./questions.js";
+import { clearHistory, loadHistory, saveResult } from "./storage.js";
 
 const difficultySelect = document.querySelector("#difficulty");
 const questionCountSelect = document.querySelector("#question-count");
@@ -29,6 +30,13 @@ const finalScore = document.querySelector("#final-score");
 const finalPercentage = document.querySelector("#final-percentage");
 const noMistakes = document.querySelector("#no-mistakes");
 const mistakesList = document.querySelector("#mistakes-list");
+const historyStatus = document.querySelector("#history-status");
+const historyBody = document.querySelector("#history-body");
+const historyEmpty = document.querySelector("#history-empty");
+const historyChartWrapper = document.querySelector("#history-chart-wrapper");
+const historyChart = document.querySelector("#history-chart");
+const historyChartDescription = document.querySelector("#history-chart-description");
+const clearHistoryButton = document.querySelector("#clear-history-button");
 const printSheet = document.querySelector("#print-sheet");
 
 let tasks = [];
@@ -36,6 +44,159 @@ let currentTaskIndex = 0;
 let quizInProgress = false;
 let timerDeadline = null;
 let timerIntervalId = null;
+let history = [];
+let activeDifficulty = null;
+
+const HISTORY_ERROR_MESSAGES = {
+  unavailable: "Historie není dostupná. Prohlížeč nepovolil přístup k místnímu úložišti.",
+  corrupt: "Uložená historie je poškozená. Po potvrzení ji můžeš smazat a začít znovu.",
+  "write-failed": "Výsledek testu se nepodařilo uložit do historie.",
+  "clear-failed": "Historii se nepodařilo smazat.",
+  "invalid-result": "Výsledek testu nelze uložit, protože obsahuje neplatná data.",
+};
+
+function showHistoryError(error) {
+  historyStatus.textContent = HISTORY_ERROR_MESSAGES[error]
+    ?? "S historií se nepodařilo pracovat.";
+  historyStatus.hidden = false;
+}
+
+function renderHistory(entries) {
+  history = entries;
+  historyBody.replaceChildren();
+  historyEmpty.hidden = history.length > 0;
+  renderHistoryChart();
+
+  for (const entry of history) {
+    const row = document.createElement("tr");
+    const dateCell = document.createElement("td");
+    const difficultyCell = document.createElement("td");
+    const scoreCell = document.createElement("td");
+    const countCell = document.createElement("td");
+    const percentageCell = document.createElement("td");
+
+    dateCell.textContent = new Intl.DateTimeFormat("cs-CZ", {
+      dateStyle: "short",
+      timeStyle: "short",
+    }).format(new Date(entry.completedAt));
+    difficultyCell.textContent = {
+      easy: "Lehká",
+      medium: "Střední",
+      hard: "Těžká",
+    }[entry.difficulty];
+    scoreCell.textContent = String(entry.score);
+    countCell.textContent = String(entry.questionCount);
+    percentageCell.textContent = `${entry.percentage} %`;
+
+    row.append(dateCell, difficultyCell, scoreCell, countCell, percentageCell);
+    historyBody.append(row);
+  }
+}
+
+function renderHistoryChart() {
+  const chartEntries = [...history].reverse();
+  historyChartWrapper.hidden = chartEntries.length === 0;
+  historyChart.querySelectorAll(".chart-content").forEach(element => element.remove());
+
+  if (chartEntries.length === 0) {
+    historyChartDescription.textContent = "";
+    return;
+  }
+
+  const namespace = "http://www.w3.org/2000/svg";
+  const group = document.createElementNS(namespace, "g");
+  group.setAttribute("class", "chart-content");
+
+  const chart = { left: 52, right: 620, top: 20, bottom: 252 };
+  const plotHeight = chart.bottom - chart.top;
+  const plotWidth = chart.right - chart.left;
+
+  for (const tick of [0, 25, 50, 75, 100]) {
+    const y = chart.bottom - (tick / 100) * plotHeight;
+    const gridLine = document.createElementNS(namespace, "line");
+    gridLine.setAttribute("x1", String(chart.left));
+    gridLine.setAttribute("x2", String(chart.right));
+    gridLine.setAttribute("y1", String(y));
+    gridLine.setAttribute("y2", String(y));
+    gridLine.setAttribute("class", "chart-grid-line");
+    group.append(gridLine);
+
+    const tickLabel = document.createElementNS(namespace, "text");
+    tickLabel.setAttribute("x", String(chart.left - 10));
+    tickLabel.setAttribute("y", String(y + 4));
+    tickLabel.setAttribute("text-anchor", "end");
+    tickLabel.setAttribute("class", "chart-axis-label");
+    tickLabel.textContent = `${tick}%`;
+    group.append(tickLabel);
+  }
+
+  const slotWidth = plotWidth / chartEntries.length;
+  const barWidth = Math.min(34, slotWidth * 0.62);
+  const chartLabels = [];
+
+  chartEntries.forEach((entry, index) => {
+    const x = chart.left + slotWidth * index + (slotWidth - barWidth) / 2;
+    const barHeight = (entry.percentage / 100) * plotHeight;
+    const y = chart.bottom - barHeight;
+    const testNumber = index + 1;
+    chartLabels.push(`Test ${testNumber}: ${entry.percentage} %`);
+
+    const bar = document.createElementNS(namespace, "rect");
+    bar.setAttribute("x", String(x));
+    bar.setAttribute("y", String(y));
+    bar.setAttribute("width", String(barWidth));
+    bar.setAttribute("height", String(barHeight));
+    bar.setAttribute("rx", "4");
+    bar.setAttribute("class", "chart-bar");
+    bar.setAttribute("aria-label", `Test ${testNumber}: ${entry.percentage} %`);
+    group.append(bar);
+
+    const percentageLabel = document.createElementNS(namespace, "text");
+    percentageLabel.setAttribute("x", String(x + barWidth / 2));
+    percentageLabel.setAttribute("y", String(Math.max(chart.top + 12, y - 6)));
+    percentageLabel.setAttribute("text-anchor", "middle");
+    percentageLabel.setAttribute("class", "chart-value-label");
+    percentageLabel.textContent = `${entry.percentage}%`;
+    group.append(percentageLabel);
+
+    const testLabel = document.createElementNS(namespace, "text");
+    testLabel.setAttribute("x", String(x + barWidth / 2));
+    testLabel.setAttribute("y", String(chart.bottom + 22));
+    testLabel.setAttribute("text-anchor", "middle");
+    testLabel.setAttribute("class", "chart-axis-label");
+    testLabel.textContent = `Test ${testNumber}`;
+    group.append(testLabel);
+  });
+
+  const yAxisLabel = document.createElementNS(namespace, "text");
+  yAxisLabel.setAttribute("x", "14");
+  yAxisLabel.setAttribute("y", String(chart.top + plotHeight / 2));
+  yAxisLabel.setAttribute("text-anchor", "middle");
+  yAxisLabel.setAttribute("class", "chart-axis-title");
+  yAxisLabel.setAttribute("transform", `rotate(-90 14 ${chart.top + plotHeight / 2})`);
+  yAxisLabel.textContent = "Úspěšnost";
+  group.append(yAxisLabel);
+
+  const xAxisLabel = document.createElementNS(namespace, "text");
+  xAxisLabel.setAttribute("x", String(chart.left + plotWidth / 2));
+  xAxisLabel.setAttribute("y", "306");
+  xAxisLabel.setAttribute("text-anchor", "middle");
+  xAxisLabel.setAttribute("class", "chart-axis-title");
+  xAxisLabel.textContent = "Jednotlivé testy (od nejstaršího)";
+  group.append(xAxisLabel);
+
+  historyChart.append(group);
+  historyChartDescription.textContent = `Sloupcový graf úspěšnosti v chronologickém pořadí. ${chartLabels.join(". ")}. Osa Y zobrazuje procentuální úspěšnost od 0 do 100 procent.`;
+}
+
+function refreshHistory() {
+  const result = loadHistory();
+  renderHistory(result.history);
+  historyStatus.hidden = result.ok;
+  if (!result.ok) {
+    showHistoryError(result.error);
+  }
+}
 
 function updateScore() {
   const evaluatedTasks = tasks.filter(task => task.evaluated);
@@ -192,6 +353,7 @@ function startQuiz() {
   }
 
   currentTaskIndex = 0;
+  activeDifficulty = difficultySelect.value;
   quizInProgress = true;
   generateButton.disabled = true;
   startButton.disabled = true;
@@ -231,6 +393,19 @@ function finishQuiz(timeExpired = false) {
   quizSection.hidden = true;
   renderResults(timeExpired);
   completionMessage.hidden = false;
+
+  const score = tasks.filter(task => task.isCorrect).length;
+  const result = saveResult({
+    difficulty: activeDifficulty,
+    score,
+    questionCount: tasks.length,
+  });
+  if (result.ok) {
+    renderHistory(result.history);
+    historyStatus.hidden = true;
+  } else {
+    showHistoryError(result.error);
+  }
 }
 
 function showNextTask() {
@@ -323,6 +498,20 @@ function clearPrintSheet() {
   printSheet.hidden = true;
 }
 
+function handleClearHistory() {
+  if (!window.confirm("Opravdu chceš smazat celou historii dokončených testů?")) {
+    return;
+  }
+
+  const result = clearHistory();
+  if (result.ok) {
+    renderHistory(result.history);
+    historyStatus.hidden = true;
+  } else {
+    showHistoryError(result.error);
+  }
+}
+
 generateButton.addEventListener("click", generateTest);
 startButton.addEventListener("click", startQuiz);
 printTestButton.addEventListener("click", () => printTest(false));
@@ -333,4 +522,7 @@ difficultySelect.addEventListener("change", invalidateGeneratedTest);
 questionCountSelect.addEventListener("change", invalidateGeneratedTest);
 timeLimitSelect.addEventListener("change", invalidateGeneratedTest);
 directionDistributionSelect.addEventListener("change", invalidateGeneratedTest);
+clearHistoryButton.addEventListener("click", handleClearHistory);
 window.addEventListener("afterprint", clearPrintSheet);
+
+refreshHistory();

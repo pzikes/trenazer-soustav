@@ -29,6 +29,8 @@ Alternativně můžeš ve Visual Studio Code použít rozšíření Live Server 
 
 Během probíhajícího testu nelze vygenerovat nový ani změnit jeho nastavení. Po dokončení může učitel připravit další test.
 
+Dokončené testy se ukládají do místního úložiště prohlížeče. Historie zobrazuje posledních deset výsledků také ve sloupcovém grafu úspěšnosti, seřazených od nejstaršího po nejnovější test. Historii lze smazat tlačítkem **Smazat historii** po potvrzení. Historie je vázaná na konkrétní prohlížeč a zařízení. Pokud je úložiště nedostupné nebo jsou uložená data poškozená, aplikace zobrazí upozornění a průběh testu zůstane funkční.
+
 ### Obtížnosti a směry převodu
 
 - **Lehká:** čísla od 0 do 15
@@ -53,7 +55,7 @@ npm.cmd test
 
 V ostatních shellech použij `npm test`.
 
-Testy ověřují generování úloh v rozsahu a se správným zastoupením převodů, validaci odpovědí a vysvětlení obou typů převodu. Vysvětlení BIN → DEC řadí mocniny od nejvyššího řádu a ukazuje také součet hodnot jednotlivých členů.
+Testy ověřují generování úloh v rozsahu a se správným zastoupením převodů, validaci odpovědí, vysvětlení obou typů převodu i ukládání a mazání historie včetně chyb úložiště. Vysvětlení BIN → DEC řadí mocniny od nejvyššího řádu a ukazuje také součet hodnot jednotlivých členů.
 
 ## Soubory
 
@@ -61,5 +63,7 @@ Testy ověřují generování úloh v rozsahu a se správným zastoupením přev
 - `styles.css` — vzhled aplikace a přizpůsobení menším obrazovkám.
 - `app.js` — práce s rozhraním, průchod testem, skóre a výsledky.
 - `questions.js` — generování úloh, formát zadání, kontrola odpovědí a vysvětlení převodů.
+- `storage.js` — načítání, ukládání a mazání historie výsledků v `localStorage`.
 - `tests/questions.test.js` — automatizované testy funkcí pro generování, kontrolu a vysvětlení úloh.
+- `tests/storage.test.js` — automatizované testy historie a ošetření chyb úložiště.
 - `package.json` — nastavení ES modulů pro Node.js a příkaz `npm test`; aplikace nemá žádné externí závislosti.
